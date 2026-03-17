@@ -10,12 +10,24 @@ import { Separator } from '@/components/ui/separator';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     getCurrentUser()
-      .then(setUser)
+      .then(u => { setUser(u); setReady(true); })
       .catch(() => router.replace('/login'));
   }, [router]);
+
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-xs">Loading…</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>

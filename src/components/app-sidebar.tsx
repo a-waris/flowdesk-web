@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 import {
   Sidebar, SidebarContent, SidebarFooter, SidebarGroup,
-  SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton,
-  SidebarMenuItem, SidebarRail,
+  SidebarGroupContent, SidebarHeader, SidebarMenu,
+  SidebarMenuButton, SidebarMenuItem, SidebarRail,
 } from '@/components/ui/sidebar';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -80,23 +80,18 @@ export function AppSidebar({ user }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger className="w-full">
-                <SidebarMenuButton
-                  size="lg"
-                  className="w-full pointer-events-none data-[state=open]:bg-sidebar-accent"
-                >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user?.avatar} />
-                    <AvatarFallback className="rounded-lg bg-primary/20 text-primary text-xs font-bold">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-0.5 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                    <span className="truncate font-semibold">{user?.name ?? 'Flowdesk'}</span>
-                    <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
-                  </div>
-                  <ChevronsUpDown size={16} className="ml-auto group-data-[collapsible=icon]:hidden" />
-                </SidebarMenuButton>
+              <DropdownMenuTrigger className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-sidebar-accent transition-colors outline-none">
+                <Avatar className="h-8 w-8 rounded-lg shrink-0">
+                  <AvatarImage src={user?.avatar} />
+                  <AvatarFallback className="rounded-lg bg-primary/20 text-primary text-xs font-bold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-0.5 text-left leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
+                  <span className="truncate font-semibold text-sidebar-foreground">{user?.name ?? 'Flowdesk'}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+                </div>
+                <ChevronsUpDown size={16} className="ml-auto shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden" />
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" align="end" className="w-48">
                 <DropdownMenuItem render={<Link href="/settings" />}>
