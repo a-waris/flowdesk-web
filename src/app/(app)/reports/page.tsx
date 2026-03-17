@@ -33,7 +33,7 @@ export default function ReportsPage() {
       setLoading(true);
       try {
         const wsId = await getWorkspaceId();
-        const data = await listSessions(wsId, { size: '200' });
+        const data = await listSessions(wsId, { size: '100' });
         setSessions(data.items ?? []);
       } catch (e) {
         console.error(e);

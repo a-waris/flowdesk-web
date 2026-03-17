@@ -121,7 +121,7 @@ export async function removeProjectMember(projectId: string, userId: string) {
 // ── Sessions / Reports ─────────────────────────────────────
 
 export async function listSessions(workspaceId: string, params?: Record<string, string>) {
-  const qs = new URLSearchParams({ workspace_id: workspaceId, size: '100', ...params }).toString();
+  const qs = new URLSearchParams({ workspace_id: workspaceId, size: '50', ...params }).toString();
   return apiFetch<{ items: Session[] }>(`/sessions/?${qs}`);
 }
 

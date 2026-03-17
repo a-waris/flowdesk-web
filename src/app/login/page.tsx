@@ -20,13 +20,9 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const form = new URLSearchParams();
-      form.set('username', email);
-      form.set('password', password);
-      const data = await apiFetch<{ access_token: string }>('/auth/token', {
+      const data = await apiFetch<{ access_token: string }>('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: form.toString(),
+        body: JSON.stringify({ email, password }),
       });
       setToken(data.access_token);
       router.replace('/dashboard');
