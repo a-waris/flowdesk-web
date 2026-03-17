@@ -118,3 +118,71 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* ── Page & element animations ── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px 0px oklch(0.50 0.268 292 / 30%); }
+  50%       { box-shadow: 0 0 16px 2px oklch(0.50 0.268 292 / 50%); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up        { animation: fade-up 0.35s ease both; }
+.animate-fade-in        { animation: fade-in 0.25s ease both; }
+.animate-slide-in-right { animation: slide-in-right 0.3s ease both; }
+.animate-scale-in       { animation: scale-in 0.2s ease both; }
+.animate-bar-grow       { animation: bar-grow 0.5s cubic-bezier(0.16,1,0.3,1) both; transform-origin: bottom; }
+.animate-glow           { animation: glow-pulse 2.5s ease-in-out infinite; }
+.animate-count-up       { animation: count-up 0.4s ease both; }
+
+/* Staggered children */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 60ms; }
+.stagger > *:nth-child(3) { animation-delay: 120ms; }
+.stagger > *:nth-child(4) { animation-delay: 180ms; }
+.stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+
+/* ── Sidebar nav active — primary tinted pill (Raycast/Linear inspired) ── */
+.nav-active {
+  background: oklch(0.50 0.268 292 / 14%);
+  box-shadow: inset 0 0 0 1px oklch(0.50 0.268 292 / 25%);
+  color: oklch(0.92 0.045 292) !important;
+}
+.nav-active svg {
+  color: oklch(0.74 0.22 292);
+  filter: drop-shadow(0 0 6px oklch(0.50 0.268 292 / 60%));
+}
+
+/* Light mode override */
+.light .nav-active {
+  background: oklch(0.50 0.268 292 / 10%);
+  box-shadow: inset 0 0 0 1px oklch(0.50 0.268 292 / 20%);
+  color: oklch(0.38 0.22 292) !important;
+}
+.light .nav-active svg {
+  color: oklch(0.50 0.268 292);
+  filter: drop-shadow(0 0 4px oklch(0.50 0.268 292 / 35%));
+}

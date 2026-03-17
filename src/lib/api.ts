@@ -11,7 +11,14 @@ export function setToken(token: string) {
 
 export function clearToken() {
   localStorage.removeItem('flowdesk_token');
+  _userCache = null;
+  _wsIdCache = null;
 }
+
+// ── In-memory caches (30s TTL) to prevent rate-limit bursts ──
+let _userCache: { value: User; exp: number } | null = null;
+let _wsIdCache: { value: string; exp: number } | null = null;
+const CACHE_TTL = 30_000;
 
 export async function apiFetch<T = unknown>(
   path: string,
@@ -38,20 +45,26 @@ export async function apiFetch<T = unknown>(
 // ── Workspace ──────────────────────────────────────────────
 
 export async function getWorkspaceId(): Promise<string> {
+  if (_wsIdCache && Date.now() < _wsIdCache.exp) return _wsIdCache.value;
   const data = await apiFetch<{ items?: { id: string }[] }>('/workspaces/');
   const workspaces = data.items ?? [];
-  if (workspaces.length) return workspaces[0].id;
-  // Auto-create
-  const created = await apiFetch<{ id: string }>('/workspaces/', {
-    method: 'POST',
-    body: JSON.stringify({ name: 'Personal Workspace', slug: `personal-${Date.now()}` }),
-  });
-  return created.id;
+  let id: string;
+  if (workspaces.length) {
+    id = workspaces[0].id;
+  } else {
+    const created = await apiFetch<{ id: string }>('/workspaces/', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'Personal Workspace', slug: `personal-${Date.now()}` }),
+    });
+    id = created.id;
+  }
+  _wsIdCache = { value: id, exp: Date.now() + CACHE_TTL };
+  return id;
 }
 
 export async function getWorkspace() {
   const id = await getWorkspaceId();
-  return apiFetch(`/workspaces/${id}`);
+  return apiFetch<Workspace>(`/workspaces/${id}`);
 }
 
 // ── Team ───────────────────────────────────────────────────
@@ -130,7 +143,22 @@ export async function getWorkspaceStats(workspaceId: string) {
 }
 
 export async function getCurrentUser() {
-  return apiFetch<User>('/users/me');
+  if (_userCache && Date.now() < _userCache.exp) return _userCache.value;
+  const user = await apiFetch<User>('/users/me');
+  _userCache = { value: user, exp: Date.now() + CACHE_TTL };
+  return user;
+}
+
+export function invalidateUserCache() {
+  _userCache = null;
+}
+
+export async function updateCurrentUser(data: Partial<Pick<User, 'full_name' | 'first_name' | 'last_name' | 'username'>>) {
+  return apiFetch<User>('/users/me', { method: 'PATCH', body: JSON.stringify(data) });
+}
+
+export async function updateWorkspace(workspaceId: string, data: { name?: string; slug?: string }) {
+  return apiFetch(`/workspaces/${workspaceId}`, { method: 'PUT', body: JSON.stringify(data) });
 }
 
 // ── Types ──────────────────────────────────────────────────
@@ -200,6 +228,14 @@ export interface Session {
   productivity_score: number;
   status: string;
   project_id?: string;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  owner_id: string;
+  created_at: string;
 }
 
 export interface WorkspaceStats {
